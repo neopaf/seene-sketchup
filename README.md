@@ -1,9 +1,12 @@
 # seene-sketchup
-Importer plugin for Sketchup, loads scene.oemodel and texturizes it with poster.jpg  (see seene-backup to get them)
+http://seene.co/ format importer plugin for [Sketchup](http://www.sketchup.com), loads scene.oemodel and texturizes it with poster.jpg  (see [seene-backup](https://github.com/neopaf/seene-backup) to get them)
 
-# install
+# Thanks
+To Creators of Seene app.
 
-Install Sketchup from http://www.sketchup.com
+# Installation
+
+Install [Sketchup](http://www.sketchup.com)
 
 Download .zip file of this repo (button on the right of this page).
 
@@ -11,7 +14,7 @@ Put [seene-sketchup importer plugin file "seene.rb"](seene.rb) to your Sketchup 
 * Mac: /Users/<your user name>/Library/Application Support/SketchUp 2015/SketchUp/Plugins
 * Windows: C:\Program Files (x86)\SketchUp\SketchUp 2015\Plugins
 
-# Use
+# Usage
 
 0. Download some Seenes using https://github.com/neopaf/seene-backup (or use sample files below)
 1. Start Sketchup
