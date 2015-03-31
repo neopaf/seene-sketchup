@@ -50,4 +50,4 @@ Progress indicator shows only what it can; most is done in one action without ca
 
 How it will look like after import (click to see):
 
-[sketchup_imported.jpg](samples/paf-first-staffpick/sketchup_imported.jpg)
+[sketchup_imported.png](samples/paf-first-staffpick/sketchup_imported.png)
