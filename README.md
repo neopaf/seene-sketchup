@@ -44,10 +44,16 @@ Progress indicator shows only what it can; most is done in one action without ca
 
 # Sample files
 
+## paf-first-staffpick
+
 [poster.jpg](samples/paf-first-staffpick/poster.jpg)
 
 [scene.oemodel](samples/paf-first-staffpick/scene.oemodel)
 
-How it will look like after import (click to see):
+### Original
 
-[sketchup_imported.png](samples/paf-first-staffpick/sketchup_imported.png)
+http://seene.co/s/vdYWH4/
+
+### After import
+
+[Click to see](samples/paf-first-staffpick/sketchup_imported.png)
