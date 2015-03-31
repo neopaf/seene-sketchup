@@ -5,7 +5,9 @@ Importer plugin for Sketchup, loads scene.oemodel and texturizes it with poster.
 
 Install Sketchup from http://www.sketchup.com
 
-Put [seene-sketchup importer plugin file](seene.rb) to your Sketchup plugins directory
+Download .zip file of this repo (button on the right of this page).
+
+Put [seene-sketchup importer plugin file "seene.rb"](seene.rb) to your Sketchup plugins directory
 * Mac: /Users/<your user name>/Library/Application Support/SketchUp 2015/SketchUp/Plugins
 * Windows: C:\Program Files (x86)\SketchUp\SketchUp 2015\Plugins
 
