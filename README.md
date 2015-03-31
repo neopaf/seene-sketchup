@@ -1,9 +1,6 @@
 # seene-sketchup
 http://seene.co/ format importer plugin for [Sketchup](http://www.sketchup.com), loads scene.oemodel and texturizes it with poster.jpg  (see [seene-backup](https://github.com/neopaf/seene-backup) to get them)
 
-# Thanks
-To Creators of Seene app.
-
 # Installation
 
 Install [Sketchup](http://www.sketchup.com)
@@ -32,16 +29,6 @@ Put [seene-sketchup importer plugin file "seene.rb"](seene.rb) to your Sketchup 
 
 Happy importing!
 
-# Known issues
-
-Does NOT work fast with new models of 240x240 scene.oemodel; working on it... maybe will add an option to reduce the depth model granularity on import.
-
-For now: 
-* old Seenes importL 15 seconds
-* new Seenes import: 5 minutes
-
-Progress indicator shows only what it can; most is done in one action without callback hooks, so can not show it (yet?). All ideas are welcome.
-
 # Sample files
 
 ## paf-first-staffpick
@@ -57,3 +44,17 @@ http://seene.co/s/vdYWH4/
 ### After import
 
 [Click to see](samples/paf-first-staffpick/sketchup_imported.png)
+
+# Known issues
+
+Does NOT work fast with new models of 240x240 scene.oemodel; working on it... maybe will add an option to reduce the depth model granularity on import.
+
+For now: 
+* old Seenes importL 15 seconds
+* new Seenes import: 5 minutes
+
+Progress indicator shows only what it can; most is done in one action without callback hooks, so can not show it (yet?). All ideas are welcome.
+
+# Thanks
+
+To Creators of Seene app.
