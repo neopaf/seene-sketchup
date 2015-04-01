@@ -51,7 +51,7 @@ Does NOT work fast with new models of 240x240 scene.oemodel; working on it... ma
 
 For now: 
 * old Seenes importL 15 seconds
-* new Seenes import: 5 minutes
+* new Seenes import: 10 minutes :(
 
 Progress indicator shows only what it can; most is done in one action without callback hooks, so can not show it (yet?). All ideas are welcome.
 
