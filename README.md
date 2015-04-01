@@ -39,31 +39,23 @@ If you are lost in rotating, click on 'Scene 1' at the top, to reset camera posi
 
 ## paf-first-staffpick
 
+Original: http://seene.co/s/vdYWH4/
+
 [poster.jpg](samples/paf-first-staffpick/poster.jpg)
 
 [scene.oemodel](samples/paf-first-staffpick/scene.oemodel)
 
-### Original
-
-http://seene.co/s/vdYWH4/
-
-### After import
-
-[Click to see](samples/paf-first-staffpick/sketchup_imported.png)
+After import: [Click to see](samples/paf-first-staffpick/sketchup_imported.png)
 
 ## paf-sand-tunnel
+
+Original: http://seene.co/s/sK2Y22
 
 [poster.jpg](samples/paf-sand-tunnel/poster.jpg)
 
 [scene.oemodel](samples/paf-sand-tunnel/scene.oemodel)
 
-### Original
-
-http://seene.co/s/sK2Y22
-
-### After import
-
-[Click to see](samples/paf-sand-tunnel/sketchup_imported.png)
+After import: [Click to see](samples/paf-sand-tunnel/sketchup_imported.png)
 
 # Known issues
 
