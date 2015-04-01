@@ -31,6 +31,10 @@ Put [seene-sketchup importer plugin file "seene.rb"](seene.rb) to your Sketchup 
 
 Happy importing!
 
+# Viewing
+
+If you are lost in rotating, click on 'Scene 1' at the top, to reset camera position.
+
 # Sample files
 
 ## paf-first-staffpick

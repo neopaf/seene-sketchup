@@ -224,6 +224,7 @@ model.shadow_info["DisplayShadows"] = true
 model.shadow_info["Light"] = 100
 model.shadow_info["Dark"] = 100
 
+model.pages.add
 
 pb = ProgressBar.new(1, "Done")
 
