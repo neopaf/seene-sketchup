@@ -31,6 +31,14 @@ Put [seene-sketchup importer plugin file "seene.rb"](seene.rb) to your Sketchup 
 
 Happy importing!
 
+# Viewing settings
+
+Make sure that View|Shadows is ON (that is default).
+In this mode shadows are suppressed (counterintuitive) and model looks best.
+In model all faces have casts_shadow OFF, but without View|Shadows ON that property is ignored.
+
+Camero|Parellel Projection mode looks better with Seenes (default is Perspective).
+
 # Sample files
 
 ## paf-first-staffpick
@@ -49,7 +57,7 @@ http://seene.co/s/vdYWH4/
 
 # Known issues
 
-Does NOT work fast with new models of 240x240 scene.oemodel.
+Full quality works really slow. Do not know how to speedup basic operation: after all triangles are prepared, bulk import operation is out of plugin code control.
 
 Progress indicator shows only what it can; most is done in one action without callback hooks, so can not show it (yet?). All ideas are welcome.
 
