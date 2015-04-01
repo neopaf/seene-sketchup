@@ -56,8 +56,6 @@ For now:
 
 Progress indicator shows only what it can; most is done in one action without callback hooks, so can not show it (yet?). All ideas are welcome.
 
-Quality is low, it looks much better in Seene itself so far. Creators know some Magic. Will learn it...
-
 # Thanks
 
 To Creators of Seene app.

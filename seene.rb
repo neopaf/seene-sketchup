@@ -201,6 +201,7 @@ group.entities.each { |entity|
 	if entity.is_a? Sketchup::Face
 		entity.set_texture_projection(vector_down,true)
 		entity.set_texture_projection(vector_down,false)
+		entity.casts_shadows = false
 	end
 }
 
