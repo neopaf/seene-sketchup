@@ -211,10 +211,10 @@ pb = ProgressBar.new(1, "Moving camera")
 # x, y, z coordinates, a "target" position that
 # defines what to look at, and an "up" vector.
 
-eye = [last_point.x/2,last_point.y/2,depthmap_width]
+eye = [last_point.x/2,last_point.y/2,depthmap_width*2]
 target = [last_point.x/2,last_point.y/2,0]
 up = [-1,0,0]
-my_camera = Sketchup::Camera.new eye, target, up
+my_camera = Sketchup::Camera.new eye, target, up, false
 
 # Get a handle to the current view and change its camera.
 view = Sketchup.active_model.active_view

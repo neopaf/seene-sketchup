@@ -31,10 +31,6 @@ Put [seene-sketchup importer plugin file "seene.rb"](seene.rb) to your Sketchup 
 
 Happy importing!
 
-# Viewing settings
-
-Camero|Parellel Projection mode looks better with Seenes (default is Perspective).
-
 # Sample files
 
 ## paf-first-staffpick
