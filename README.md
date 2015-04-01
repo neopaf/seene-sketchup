@@ -19,6 +19,7 @@ Put [seene-sketchup importer plugin file "seene.rb"](seene.rb) to your Sketchup 
 3. File|Import...
 4. Format: Seene (*.oemodel)
 5. Pick scene.oemodel you want to import (poster.jpg should be in same folder with it)
+5a. Click Options... to set import quality: 0=best, slowest; default=3 (poor, fast)
 6. Click Import
 7. Wait around 5 minutes
 8. Be happy
