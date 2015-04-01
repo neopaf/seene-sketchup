@@ -51,6 +51,20 @@ http://seene.co/s/vdYWH4/
 
 [Click to see](samples/paf-first-staffpick/sketchup_imported.png)
 
+## paf-sand-tunnel
+
+[poster.jpg](samples/paf-sand-tunnel/poster.jpg)
+
+[scene.oemodel](samples/paf-sand-tunnel/scene.oemodel)
+
+### Original
+
+http://seene.co/s/sK2Y22
+
+### After import
+
+[Click to see](samples/paf-sand-tunnel/sketchup_imported.png)
+
 # Known issues
 
 Full quality works really slow. Do not know how to speedup basic operation: after all triangles are prepared, bulk import operation is out of plugin code control.
