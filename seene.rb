@@ -220,6 +220,10 @@ my_camera = Sketchup::Camera.new eye, target, up
 view = Sketchup.active_model.active_view
 view.camera = my_camera
 
+model.shadow_info["DisplayShadows"] = true
+model.shadow_info["Light"] = 100
+model.shadow_info["Dark"] = 100
+
 
 pb = ProgressBar.new(1, "Done")
 
@@ -233,3 +237,4 @@ end
 
      Sketchup.register_importer(SeeneImporter.new)
 #UI.messagebox("hi")
+
