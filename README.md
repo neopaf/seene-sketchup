@@ -34,8 +34,11 @@ Happy importing!
 # Viewing settings
 
 Make sure that View|Shadows is ON (that is default).
-In this mode shadows are suppressed (counterintuitive) and model looks best.
+In this mode shadows are customizable, without it they are also ON but with some uncontrollable settings.
 In model all faces have casts_shadow OFF, but without View|Shadows ON that property is ignored.
+
+Open Window|Shadows to control shadow settings, and move Light and Dark to max 100.
+This will remove all shadows (fill them).
 
 Camero|Parellel Projection mode looks better with Seenes (default is Perspective).
 
