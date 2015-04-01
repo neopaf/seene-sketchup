@@ -27,7 +27,7 @@ Put [seene-sketchup importer plugin file "seene.rb"](seene.rb) to your Sketchup 
 9. Be creative. Combine several Seene-views of one object together or make lots of Seenes in a room and put it in a room in 3D
 10. Publish result somewhere
 11. Send some feedback to me, [Alexander Petrossian (PAF)](mailto:alexander.petrossian+seene.rb@gmail.com)
-12. If see a problem, report it on [here](https://github.com/neopaf/seene-sketchup/issues), I'll see what I can do
+12. If see a problem, report it [here](https://github.com/neopaf/seene-sketchup/issues), I'll see what I can do
 
 Happy importing!
 
