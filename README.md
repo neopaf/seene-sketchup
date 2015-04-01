@@ -21,12 +21,13 @@ Put [seene-sketchup importer plugin file "seene.rb"](seene.rb) to your Sketchup 
 5. Pick scene.oemodel you want to import (poster.jpg should be in same folder with it)
 5a. Click Options... to set import quality: 0=best, slowest; default=3 (poor, fast)
 6. Click Import
-7. Wait around 5 minutes
+7. Wait around 20 seconds for default poor quality 
+7a. or 10 minutes for best quality, application will totally lock up and not update its screen, that's normal
 8. Be happy
 9. Be creative. Combine several Seene-views of one object together or make lots of Seenes in a room and put it in a room in 3D
 10. Publish result somewhere
 11. Send some feedback to me, [Alexander Petrossian (PAF)](mailto:alexander.petrossian+seene.rb@gmail.com)
-12. If see a problem, report it on [here](https://github.com/neopaf/seene-sketchup/issues), I'll see what I can do
+12. If see a problem, report it [here](https://github.com/neopaf/seene-sketchup/issues), I'll see what I can do
 
 Happy importing!
 
@@ -48,11 +49,7 @@ http://seene.co/s/vdYWH4/
 
 # Known issues
 
-Does NOT work fast with new models of 240x240 scene.oemodel; working on it... maybe will add an option to reduce the depth model granularity on import.
-
-For now: 
-* old Seenes importL 15 seconds
-* new Seenes import: 10 minutes :(
+Does NOT work fast with new models of 240x240 scene.oemodel.
 
 Progress indicator shows only what it can; most is done in one action without callback hooks, so can not show it (yet?). All ideas are welcome.
 
