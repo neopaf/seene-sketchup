@@ -102,23 +102,29 @@ class SeeneImporter < Sketchup::Importer
        # button inside the File > Import dialog should be enabled while your
        # importer is selected.
        def supports_options?
-         return false #true
+         return true
        end
 
        # This method is called by SketchUp when the user clicks on the
        # "Options" button inside the File > Import dialog. You can use it to
        # gather and store settings for your importer.
+       @@skip = 3
        def do_options
          # In a real use you would probably store this information in an
          # instance variable.
-         my_settings = UI.inputbox(['My Import Option:'], ['1'],
-           "Import Options")
+         my_settings = UI.inputbox(['0=slow, 3=fast)'], ['3'],
+           "Seene import options")
+	 if my_settings then
+		@@skip = my_settings[0].to_i
+	 end
        end
 
        # This method is called by SketchUp after the user has selected a file
        # to import. This is where you do the real work of opening and
        # processing the file.
        def load_file(file_path, status)
+begin
+
 folder = File.dirname(file_path)
 
 buffer = File.binread(file_path)
@@ -142,26 +148,32 @@ def v(x,y,depthmap,depthmap_width,depthmap_height)
 	depth = depthmap[y * depthmap_width + x]
 	return Geom::Point3d.new(
 		x,
-		y,
+		-y,
 		-depth * depthmap_width)
 end
 
-pb = ProgressBar.new(depthmap_height-2, "Making faces...")
+pb = ProgressBar.new(depthmap_height-2, "Making faces... (will hang at about 97%, wait a few minutes)")
 mesh = Geom::PolygonMesh.new
-for y in 0..depthmap_height-2
-for x in 0..depthmap_width-2
+
+block_size = 1 + @@skip
+y = 0
+while y < depthmap_height-block_size
+x = 0
+while x < depthmap_width-block_size
 	mesh.add_polygon(
 		v(x+0, y+0, depthmap,depthmap_width,depthmap_height),
-		v(x+1, y+0, depthmap,depthmap_width,depthmap_height),
-		v(x+1, y+1, depthmap,depthmap_width,depthmap_height),
+		v(x+block_size, y+0, depthmap,depthmap_width,depthmap_height),
+		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height),
 	)
 	mesh.add_polygon(
 		v(x+0, y+0, depthmap,depthmap_width,depthmap_height),
-		v(x+1, y+1, depthmap,depthmap_width,depthmap_height),
-		v(x+0, y+1, depthmap,depthmap_width,depthmap_height)
+		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height),
+		v(x+0, y+block_size, depthmap,depthmap_width,depthmap_height)
 	)
+	x = x + block_size
 end
 pb.update(y)
+y = y + block_size
 end
 
 
@@ -169,25 +181,26 @@ model = Sketchup.active_model
 group = model.entities.add_group
 
 materials = model.materials
-b_material = materials.add('Back')
-b_material.texture = 'black'
 f_material = materials.add('Front')
 f_material.texture = File.expand_path("poster.jpg",folder)
+b_material = materials.add('Back')
+b_material.texture = 'black'
 
 #first_point = v(0, 0, depthmap,depthmap_width,depthmap_height)
-last_point = v(depthmap_width-1, depthmap_height-1, depthmap,depthmap_width,depthmap_height)
+last_point = v(depthmap_width-block_size, depthmap_height-block_size, depthmap,depthmap_width,depthmap_height)
 #f_material.texture.size = last_point.x - first_point.x
 f_material.texture.size = last_point.x
 smooth_flags = Geom::PolygonMesh::AUTO_SOFTEN
 
 pb = ProgressBar.new(1, "Adding faces (slow)")
-group.entities.add_faces_from_mesh mesh, smooth_flags, f_material, b_material
+group.entities.add_faces_from_mesh mesh, smooth_flags, f_material, f_material
 
 pb = ProgressBar.new(1, "Setting projection properties")
 vector_down = Geom::Vector3d.new 0,0,1
 group.entities.each { |entity|
 	if entity.is_a? Sketchup::Face
 		entity.set_texture_projection(vector_down,true)
+		entity.set_texture_projection(vector_down,false)
 	end
 }
 
@@ -209,6 +222,10 @@ view.camera = my_camera
 
 pb = ProgressBar.new(1, "Done")
 
+rescue Exception => e
+  UI.messagebox "Import failed: " + e.to_s + "\n" + e.backtrace
+  raise #to display the problem in ruby console as well (should be open)
+end
          return 0 # 0 is the code for a successful import
        end
      end
