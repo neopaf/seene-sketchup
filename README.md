@@ -37,6 +37,10 @@ Camera|Orbit, hold your Alt key, drag the middle of a Seene around.
 
 If you are lost in rotating, click on 'Scene 1' at the top, to reset camera position.
 
+# Retouching
+
+Recommend the Smooth tool from [Skulpt Tools](http://sketchucation.com/forums/viewtopic.php?t=20781) plugin to fight small bumps.
+
 # Sample files
 
 ## paf-first-staffpick
