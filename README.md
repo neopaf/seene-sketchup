@@ -33,6 +33,8 @@ Happy importing!
 
 # Viewing
 
+Camera|Orbit, hold your Alt key, drag the middle of a Seene around.
+
 If you are lost in rotating, click on 'Scene 1' at the top, to reset camera position.
 
 # Sample files
