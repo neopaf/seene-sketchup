@@ -112,7 +112,7 @@ class SeeneImporter < Sketchup::Importer
        def do_options
          # In a real use you would probably store this information in an
          # instance variable.
-         my_settings = UI.inputbox(['0=slow, 3=fast)'], ['3'],
+         my_settings = UI.inputbox(['0=slow 3=fast'], [@@skip.to_s],
            "Seene import options")
 	 if my_settings then
 		@@skip = my_settings[0].to_i
@@ -123,7 +123,15 @@ class SeeneImporter < Sketchup::Importer
        # to import. This is where you do the real work of opening and
        # processing the file.
        def load_file(file_path, status)
-begin
+		model = Sketchup.active_model
+		status = model.start_operation('Import Seene', true)
+		result = load_file_internal(file_path, status)
+		model.commit_operation
+		return result
+       end
+ 
+       def load_file_internal(file_path, status)
+ begin
 
 folder = File.dirname(file_path)
 
