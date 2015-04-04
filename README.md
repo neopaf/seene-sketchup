@@ -21,8 +21,8 @@ Put [seene-sketchup importer plugin file "seene.rb"](seene.rb) to your Sketchup 
 5. Pick scene.oemodel you want to import (poster.jpg should be in same folder with it)
 5a. Click Options... to set import quality: 0=best, slowest; default=3 (poor, fast)
 6. Click Import
-7. Wait around 5 seconds for default poor quality 
-7a. or 5 minutes for best quality, application will totally lock up and not update its screen, that's normal
+7. Wait around 5 seconds for default quality 
+7a. or 1 minute for best quality, application will totally lock up and not update its screen, that's normal
 8. Be happy
 9. Be creative. Combine several Seene-views of one object together or make lots of Seenes in a room and put it in a room in 3D
 10. Publish result somewhere
@@ -63,14 +63,8 @@ Original: http://seene.co/s/sK2Y22
 
 After import: [Click to see](samples/paf-sand-tunnel/sketchup_imported.png)
 
-# Known issues
-
-Full quality works really slow. Do not know how to speedup basic operation: after all triangles are prepared, bulk import operation is out of plugin code control.
-
-Progress indicator shows only what it can; most is done in one action without callback hooks, so can not show it (yet?). All ideas are welcome.
-
 # Thanks
 
 To Creators of Seene app.
 
-To authors of https://github.com/SketchUp/sketchup-stl/blob/master/src/sketchup-stl/importer.rb for speedup idea.
+To authors of https://github.com/SketchUp/sketchup-stl/blob/master/src/sketchup-stl/importer.rb for two speedup ideas.
