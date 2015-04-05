@@ -87,7 +87,7 @@ After import: [Click to see](samples/paf-sand-tunnel/sketchup_imported.png), [Ri
 
 # mona (export sample)
 
-Original: [Right click here|Download...](https://github.com/neopaf/seene-sketchup/raw/master/samples/artificial-1-mona/imported.skp)
+Original: [Right click here|Download...](https://github.com/neopaf/seene-sketchup/raw/master/samples/artificial-1-mona/original.skp)
 
 Exported:
 
