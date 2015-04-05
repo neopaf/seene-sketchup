@@ -91,7 +91,7 @@ Original: [Right click here|Download...](https://github.com/neopaf/seene-sketchu
 
 Exported:
 
-[poster.jpg](samples/artificial-1-mona/poster.jpg)  rotate 90 degrees before uploading (TODO: remove this step)
+[poster.jpg](samples/artificial-1-mona/poster.jpg)
 
 [scene.oemodel](samples/artificial-1-mona/scene.oemodel)
 

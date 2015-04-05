@@ -192,7 +192,6 @@ model.pages.add
      end
 
      Sketchup.register_importer(SeeneImporter.new)
-#UI.messagebox("hi")
 
 class SeeneExporter
 	def self.export
@@ -219,10 +218,11 @@ view = model.active_view
 
 #@TODO rework below code to work from existing camera point of view (and remove this block)
 eye = [depthmap_width *@k /2,-depthmap_height *@k /2,depthmap_width *@k *2]
-target = [depthmap_width *@k /2,-depthmap_height *@k /2,0]
-camera_up = [-1,0,0]
-view.camera = Sketchup::Camera.new eye, target, camera_up, false
-#return
+target = [depthmap_width *@k /2,-depthmap_height *@k /2,-depthmap_width]
+camera_up_jpg = [0,1,0]
+camera_up_human = [-1,0,0]
+view.camera = Sketchup::Camera.new eye, target, camera_up_jpg, false
+
 #camera = view.camera
 #camera.eye
 trace_down = Geom::Vector3d.new(0, 0, -1) #camera.direction
@@ -255,8 +255,8 @@ end
 folder = "/tmp" # @TODO
 
 version =	3
-camera_width = 2000 # (jpg
-camera_height = 2000 # sizes)
+camera_width = 1936 # (jpg
+camera_height = 1936 # sizes)
 camera_fx = 2334.201416015625 #fx?
 camera_fy = 2334.201416015625 #fy?
 camera_k1 = 0.0
@@ -286,6 +286,7 @@ depthmap_height]
   }
   view.write_image keys
 
+view.camera = Sketchup::Camera.new eye, target, camera_up_human, false
 UI.messagebox "Exported to " + folder
 	end
 end
@@ -295,3 +296,5 @@ unless file_loaded?(__FILE__)
 end
  
 file_loaded(__FILE__)
+
+#UI.messagebox("hi")
