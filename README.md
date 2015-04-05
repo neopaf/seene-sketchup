@@ -97,7 +97,7 @@ Exported:
 
 Uploaded: http://seene.co/s/MUoPZc/ 
 
-#TODO: opens only in app now, on web there is some problem and depth model is not loaded, fix it!
+TODO: opens only in app now, on web there is some problem and depth model is not loaded, fix it!
 
 # Thanks
 
