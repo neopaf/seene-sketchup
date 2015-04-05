@@ -80,6 +80,18 @@ camera_k1,
 camera_k2,
 depthmap_width,
 depthmap_height = buffer.unpack("LLLffffLL")
+
+raise "Importer works with version 3 only, and this is version " + version.to_s unless version==3
+#3
+#1936 (jpg
+#1936 sizes)
+#2334.201416015625 #fx?
+#2334.201416015625 #fy?
+#0.0
+#0.0
+#240
+#240
+
 header_size = 36
 
 body = buffer[header_size, buffer.length]
@@ -124,8 +136,9 @@ group = model.entities.add_group
 materials = model.materials
 f_material = materials.add('Front')
 f_material.texture = File.expand_path("poster.jpg",folder)
-b_material = materials.add('Back')
-b_material.texture = 'black'
+#b_material = materials.add('Back')
+#b_material.texture = 'black'
+b_material = f_material
 
 #first_point = v(0, 0, depthmap,depthmap_width,depthmap_height)
 last_point = v(depthmap_width-block_size, depthmap_height-block_size, depthmap,depthmap_width,depthmap_height)
@@ -140,7 +153,7 @@ smooth_flags = Geom::PolygonMesh::AUTO_SOFTEN
 #http://www.sketchup.com/intl/en/developer/docs/ourdoc/entities#fill_from_mesh
 #quote:
 #It has higher performance than add_faces_from_mesh, but does less error checking as it builds the geometry.
-group.entities.fill_from_mesh(mesh, false, smooth_flags, f_material, f_material)
+group.entities.fill_from_mesh(mesh, false, smooth_flags, f_material, b_material)
 
 
 ## Setting projection properties
@@ -180,3 +193,105 @@ model.pages.add
 
      Sketchup.register_importer(SeeneImporter.new)
 #UI.messagebox("hi")
+
+class SeeneExporter
+	def self.export
+
+		Sketchup.status_text = 'Exporting Seene...'
+		begin
+			export_internal
+		rescue Exception => e
+		  UI.messagebox "Export failed: " + e.to_s # + "\n" + e.backtrace
+		  raise #to display the problem in ruby console as well (should be open)
+		end
+
+		Sketchup.status_text = ''
+	end
+
+	@k = 3
+	def self.export_internal
+
+depthmap_width = 80 #10sec # @TODO an export option // 240
+depthmap_height = depthmap_width
+depthmap = Array.new(depthmap_width * depthmap_height)
+model = Sketchup.active_model
+view = model.active_view
+
+#@TODO rework below code to work from existing camera point of view (and remove this block)
+eye = [depthmap_width *@k /2,-depthmap_height *@k /2,depthmap_width *@k *2]
+target = [depthmap_width *@k /2,-depthmap_height *@k /2,0]
+camera_up = [-1,0,0]
+view.camera = Sketchup::Camera.new eye, target, camera_up, false
+#return
+#camera = view.camera
+#camera.eye
+trace_down = Geom::Vector3d.new(0, 0, -1) #camera.direction
+
+block_size = 1
+y = 0
+while y < depthmap_height
+x = 0
+while x < depthmap_width
+=begin
+	return Geom::Point3d.new(
+		x,
+		-y,
+		-depth * depthmap_width)
+=end
+	ray = [Geom::Point3d.new(x * @k, -y * @k, 0), trace_down]
+	hit = model.raytest(ray, true) # Ignore hidden geometry when computing intersections.
+	if hit == nil
+		depth = 10 # "far away"
+	else
+		depth = -hit[0].z / @k / depthmap_width
+	end
+	depthmap[y * depthmap_width + x] = depth
+
+	x = x + block_size
+end
+y = y + block_size
+end
+
+folder = "/tmp" # @TODO
+
+version =	3
+camera_width = 2000 # (jpg
+camera_height = 2000 # sizes)
+camera_fx = 2334.201416015625 #fx?
+camera_fy = 2334.201416015625 #fy?
+camera_k1 = 0.0
+camera_k2 = 0.0
+
+#puts depthmap
+
+File.binwrite(File.expand_path("scene.oemodel",folder),
+[version,
+camera_width,
+camera_height,
+camera_fx,
+camera_fy,
+camera_k1,
+camera_k2,
+depthmap_width,
+depthmap_height]
+.concat(depthmap)
+.pack("LLLffffLLf*"))
+
+  keys = {
+    :filename => File.expand_path("poster.jpg",folder),
+    :width => camera_width,
+    :height => camera_height,
+    :antialias => true,
+    :transparent => false
+  }
+  view.write_image keys
+
+UI.messagebox "Exported to " + folder
+	end
+end
+
+unless file_loaded?(__FILE__)
+	UI.menu("Plugins").add_item("Export Seene...") { SeeneExporter.export }
+end
+ 
+file_loaded(__FILE__)

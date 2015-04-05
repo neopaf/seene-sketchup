@@ -1,5 +1,9 @@
 # seene-sketchup
-http://seene.co/ format importer plugin for [Sketchup](http://www.sketchup.com), loads scene.oemodel and texturizes it with poster.jpg  (see [seene-backup](https://github.com/neopaf/seene-backup) to get them)
+http://seene.co/ format importer/exporter plugin for [Sketchup](http://www.sketchup.com).
+
+Loads scene.oemodel and texturizes it with poster.jpg  (see [seene-backup](https://github.com/neopaf/seene-backup) to get them)
+
+Exports scene.oemodel and poster.jpg from Sketchup (from usual camera position for now)  (see [seene-uploader](https://github.com/neopaf/seene-uploader) to put them back inside Seene)
 
 # Installation
 
@@ -11,7 +15,7 @@ Put [seene-sketchup importer plugin file "seene.rb"](seene.rb) to your Sketchup 
 * Mac: /Users/<your user name>/Library/Application Support/SketchUp 2015/SketchUp/Plugins
 * Windows: C:\Program Files (x86)\SketchUp\SketchUp 2015\Plugins
 
-# Usage
+# Usage Importer
 
 0. Download some Seenes using https://github.com/neopaf/seene-backup (or use sample files below)
 1. Start Sketchup
@@ -41,6 +45,24 @@ If you are lost in rotating, click on 'Scene 1' at the top, to reset camera posi
 
 Recommend the Smooth tool from [Skulpt Tools](http://sketchucation.com/forums/viewtopic.php?t=20781) plugin to fight small bumps.
 
+# Usage exporting
+
+Tools|Export...
+
+Your Sketchup model from point of view [120,-120,160] looking down z will be exported.
+
+scene.model + poster.jpg will appear in /tmp folder (create one under windows)
+
+Points that were not raytraced will appear as "far away".
+
+TODO: raytrace from a plane with current camera, toward camera direction (export to "Seene" what user "sees").
+
+TODO: customize depthmap size and step (now 80x80 with step = 3).
+
+TODO: customize image size.
+
+TODO: provide export folder dialog.
+
 # Sample files
 
 ## paf-first-staffpick
@@ -62,6 +84,13 @@ Original: http://seene.co/s/sK2Y22
 [scene.oemodel](samples/paf-sand-tunnel/scene.oemodel)
 
 After import: [Click to see](samples/paf-sand-tunnel/sketchup_imported.png)
+
+
+## mona (export sample)
+
+http://seene.co/s/MUoPZc/ 
+
+TODO: opens only in app now, on web there is some problem and depth model is not loaded, fix it!
 
 # Thanks
 
