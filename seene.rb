@@ -81,7 +81,7 @@ camera_k2,
 depthmap_width,
 depthmap_height = buffer.unpack("LLLffffLL")
 
-raise "Importer works with version 3 only, and this is version " + version.to_s unless version==3
+raise "Importer works with versions 2 and 3 only, and this is version " + version.to_s unless version==3 || version==2
 #3
 #1936 (jpg
 #1936 sizes)

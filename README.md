@@ -73,7 +73,7 @@ Original: http://seene.co/s/vdYWH4/
 
 [scene.oemodel](samples/paf-first-staffpick/scene.oemodel)
 
-After import: [Click to see](samples/paf-first-staffpick/sketchup_imported.png)
+After import: [Click to see](samples/paf-first-staffpick/sketchup_imported.png), [download skp](samples/paf-first-staffpick/imported.skp)
 
 ## paf-sand-tunnel
 
@@ -83,14 +83,21 @@ Original: http://seene.co/s/sK2Y22
 
 [scene.oemodel](samples/paf-sand-tunnel/scene.oemodel)
 
-After import: [Click to see](samples/paf-sand-tunnel/sketchup_imported.png)
+After import: [Click to see](samples/paf-sand-tunnel/sketchup_imported.png), [download skp](samples/paf-sand-tunnel/imported.skp)
 
+# mona (export sample)
 
-## mona (export sample)
+Original: [download skp](samples/artificial-1-mona/original.skp)
 
-http://seene.co/s/MUoPZc/ 
+Exported:
 
-TODO: opens only in app now, on web there is some problem and depth model is not loaded, fix it!
+[poster.jpg](samples/artificial-1-mona/poster.jpg)
+
+[scene.oemodel](samples/artificial-1-mona/scene.oemodel)
+
+Uploaded: http://seene.co/s/MUoPZc/ 
+
+#TODO: opens only in app now, on web there is some problem and depth model is not loaded, fix it!
 
 # Thanks
 
