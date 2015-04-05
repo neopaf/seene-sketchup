@@ -73,7 +73,7 @@ Original: http://seene.co/s/vdYWH4/
 
 [scene.oemodel](samples/paf-first-staffpick/scene.oemodel)
 
-After import: [Click to see](samples/paf-first-staffpick/sketchup_imported.png), [download skp (Right click here|Download...](https://github.com/neopaf/seene-sketchup/raw/master/samples/paf-first-staffpick/imported.skp)
+After import: [Click to see](samples/paf-first-staffpick/sketchup_imported.png), [Right click here|Download...](https://github.com/neopaf/seene-sketchup/raw/master/samples/paf-first-staffpick/imported.skp)
 
 ## paf-sand-tunnel
 
@@ -83,11 +83,11 @@ Original: http://seene.co/s/sK2Y22
 
 [scene.oemodel](samples/paf-sand-tunnel/scene.oemodel)
 
-After import: [Click to see](samples/paf-sand-tunnel/sketchup_imported.png), [download (Right click here|Download...)](https://github.com/neopaf/seene-sketchup/raw/master/samples/paf-sand-tunnel/imported.skp)
+After import: [Click to see](samples/paf-sand-tunnel/sketchup_imported.png), [Right click here|Download...](https://github.com/neopaf/seene-sketchup/raw/master/samples/paf-sand-tunnel/imported.skp)
 
 # mona (export sample)
 
-Original: [download (Right click here|Download...)](https://github.com/neopaf/seene-sketchup/raw/master/samples/artificial-1-mona/imported.skp)
+Original: [Right click here|Download...](https://github.com/neopaf/seene-sketchup/raw/master/samples/artificial-1-mona/imported.skp)
 
 Exported:
 
