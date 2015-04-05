@@ -207,22 +207,22 @@ class SeeneExporter
 		Sketchup.status_text = ''
 	end
 
-	@k = 3
+	@k = 1
 	def self.export_internal
 
-depthmap_width = 80 #10sec # @TODO an export option // 240
+depthmap_width = 240 #10sec # @TODO an export option // 240
 depthmap_height = depthmap_width
 depthmap = Array.new(depthmap_width * depthmap_height)
 model = Sketchup.active_model
 view = model.active_view
 
 #@TODO rework below code to work from existing camera point of view (and remove this block)
-eye = [depthmap_width *@k /2,-depthmap_height *@k /2,depthmap_width *@k *2]
+eye = [depthmap_width *@k /2,-depthmap_height *@k /2,depthmap_width *@k * 0.8]
 target = [depthmap_width *@k /2,-depthmap_height *@k /2,-depthmap_width]
 camera_up_jpg = [0,1,0]
 camera_up_human = [-1,0,0]
 view.camera = Sketchup::Camera.new eye, target, camera_up_jpg, false
-
+#view.camera = Sketchup::Camera.new eye, target, camera_up_human, false; return
 #camera = view.camera
 #camera.eye
 trace_down = Geom::Vector3d.new(0, 0, -1) #camera.direction
