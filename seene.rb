@@ -207,15 +207,22 @@ class SeeneExporter
 		Sketchup.status_text = ''
 	end
 
-	@k = 1
+#	def self.camera_z(fov, a)
+#		Math.tan(fov/2.0 /360 * 2*Math::PI) * a/2.0
+#	end
+
+	@@skip = 2
 	def self.export_internal
 
-depthmap_width = 240 #10sec # @TODO an export option // 240
+folder = "/tmp" # @TODO
+
+block_size = 1 + @@skip
+
+depthmap_width = 240 / block_size #10sec # @TODO an export option // 240
 depthmap_height = depthmap_width
 depthmap = Array.new(depthmap_width * depthmap_height)
 model = Sketchup.active_model
 view = model.active_view
-
 #@TODO rework below code to work from existing camera point of view (and remove this block)
 version =	2 # without depth_min,depth_max new fields
 camera_width = 1936 # (jpg
@@ -224,18 +231,26 @@ camera_fx = 2334.201416015625 #fx?
 camera_fy = 2334.201416015625 #fy?
 camera_k1 = 0.0
 camera_k2 = 0.0
-
-eye = [depthmap_width *@k /2,-depthmap_height *@k /2,depthmap_width *@k * camera_width/camera_fx]
-target = [depthmap_width *@k /2,-depthmap_height *@k /2,-depthmap_width]
+#6071mm width of picture
+#fov = view.field_of_view #/ view.vpheight * view.vpwidth
+#eye = [depthmap_width *block_size /2,-depthmap_height *block_size /2,depthmap_width *block_size * camera_width/camera_fx]
+#eye = [depthmap_width *block_size /2,-depthmap_height *block_size /2, camera_z(fov, depthmap_width)]
+#eye = [depthmap_width *block_size /2,-depthmap_height *block_size /2, depthmap_width *block_size *0.6434316354]
+#eye = [depthmap_width *block_size /2,-depthmap_height *block_size /2, depthmap_width *block_size * 2]
+#target = [depthmap_width *block_size /2,-depthmap_height *block_size /2,-depthmap_width]
 camera_up_jpg = [0,1,0]
 camera_up_human = [-1,0,0]
-view.camera = Sketchup::Camera.new eye, target, camera_up_jpg, false
+old_camera = view.camera
+view.camera = Sketchup::Camera.new old_camera.eye, old_camera.target, camera_up_jpg, false
+view.zoom_extents
+view.zoom 1.05
+
+##if false
 #view.camera = Sketchup::Camera.new eye, target, camera_up_human, false; return
 #camera = view.camera
 #camera.eye
 trace_down = Geom::Vector3d.new(0, 0, -1) #camera.direction
 
-block_size = 1
 y = 0
 while y < depthmap_height
 x = 0
@@ -246,23 +261,19 @@ while x < depthmap_width
 		-y,
 		-depth * depthmap_width)
 =end
-	ray = [Geom::Point3d.new(x * @k, -y * @k, 0), trace_down]
+	ray = [Geom::Point3d.new(x * block_size, -y * block_size, 0), trace_down]
 	hit = model.raytest(ray, true) # Ignore hidden geometry when computing intersections.
 	if hit == nil
 		depth = 10 # "far away"
 	else
-		depth = -hit[0].z / @k / depthmap_width
+		depth = -hit[0].z / block_size / depthmap_width
 	end
 	depthmap[y * depthmap_width + x] = depth
 
-	x = x + block_size
+	x = x + 1
 end
-y = y + block_size
+y = y + 1
 end
-
-folder = "/tmp" # @TODO
-
-#puts depthmap
 
 File.binwrite(File.expand_path("scene.oemodel",folder),
 [version,
@@ -276,6 +287,7 @@ depthmap_width,
 depthmap_height]
 .concat(depthmap)
 .pack("LLLffffLLf*"))
+##end
 
   keys = {
     :filename => File.expand_path("poster.jpg",folder),
@@ -286,7 +298,9 @@ depthmap_height]
   }
   view.write_image keys
 
-view.camera = Sketchup::Camera.new eye, target, camera_up_human, false
+view.camera = Sketchup::Camera.new old_camera.eye, old_camera.target, camera_up_human, false
+view.zoom_extents
+view.zoom 1.05
 UI.messagebox "Exported to " + folder
 	end
 end
