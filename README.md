@@ -97,7 +97,25 @@ Exported:
 
 Uploaded: http://seene.co/s/MUoPZc/ 
 
-TODO: opens only in app now, on web there is some problem and depth model is not loaded, fix it!
+(opens only in app now, on web there is some problem. was fixed in current version of Exporter)
+
+# petya (export sample)
+
+Original: http://seene.co/s/NPqN7M
+
+Saved with https://github.com/neopaf/seene-backup
+
+Imported with this importer.
+
+Retouched (using Skulpt Tools, see above): [Right click here|Download...](https://github.com/neopaf/seene-sketchup/raw/master/samples/retouched-1-petya/retouched.skp)
+
+Exported:
+
+[poster.jpg](samples/retouched-1-petya/poster.jpg)
+
+[scene.oemodel](samples/retouched-1-petya/scene.oemodel)
+
+Uploaded: http://seene.co/s/DpXtqn/
 
 # Thanks
 
