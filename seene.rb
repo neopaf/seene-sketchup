@@ -217,7 +217,15 @@ model = Sketchup.active_model
 view = model.active_view
 
 #@TODO rework below code to work from existing camera point of view (and remove this block)
-eye = [depthmap_width *@k /2,-depthmap_height *@k /2,depthmap_width *@k * 0.8]
+version =	2 # without depth_min,depth_max new fields
+camera_width = 1936 # (jpg
+camera_height = 1936 # sizes)
+camera_fx = 2334.201416015625 #fx?
+camera_fy = 2334.201416015625 #fy?
+camera_k1 = 0.0
+camera_k2 = 0.0
+
+eye = [depthmap_width *@k /2,-depthmap_height *@k /2,depthmap_width *@k * camera_width/camera_fx]
 target = [depthmap_width *@k /2,-depthmap_height *@k /2,-depthmap_width]
 camera_up_jpg = [0,1,0]
 camera_up_human = [-1,0,0]
@@ -253,14 +261,6 @@ y = y + block_size
 end
 
 folder = "/tmp" # @TODO
-
-version =	3
-camera_width = 1936 # (jpg
-camera_height = 1936 # sizes)
-camera_fx = 2334.201416015625 #fx?
-camera_fy = 2334.201416015625 #fy?
-camera_k1 = 0.0
-camera_k2 = 0.0
 
 #puts depthmap
 
