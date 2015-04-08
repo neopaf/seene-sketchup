@@ -3,7 +3,7 @@ http://seene.co/ format importer/exporter plugin for [Sketchup](http://www.sketc
 
 Loads scene.oemodel and texturizes it with poster.jpg  (see [seene-backup](https://github.com/neopaf/seene-backup) to get them)
 
-Exports scene.oemodel and poster.jpg from Sketchup (from usual camera position for now)  (see [seene-uploader](https://github.com/neopaf/seene-uploader) to put them back inside Seene)
+Exports scene.oemodel and poster.jpg from Sketchup as viewed from current camera position (ignores zoom level now, so do not zoom in/out!)  (see [seene-uploader](https://github.com/neopaf/seene-uploader) to put them back inside Seene)
 
 # Installation
 
@@ -23,15 +23,15 @@ Put [seene-sketchup importer plugin file "seene.rb"](seene.rb) to your Sketchup 
 3. File|Import...
 4. Format: Seene (*.oemodel)
 5. Pick scene.oemodel you want to import (poster.jpg should be in same folder with it)
-5a. Click Options... to set import quality: 0=best, slowest; default=3 (poor, fast)
-6. Click Import
-7. Wait around 5 seconds for default quality 
-7a. or 1 minute for best quality, application will totally lock up and not update its screen, that's normal
-8. Be happy
-9. Be creative. Combine several Seene-views of one object together or make lots of Seenes in a room and put it in a room in 3D
-10. Publish result somewhere
-11. Send some feedback to me, [Alexander Petrossian (PAF)](mailto:alexander.petrossian+seene.rb@gmail.com)
-12. If see a problem, report it [here](https://github.com/neopaf/seene-sketchup/issues), I'll see what I can do
+6. Click Options... to set import quality: 0=best, slowest; default=3 (poor, fast)
+7. Click Import
+8. Wait around 5 seconds for default quality 
+9. or 1 minute for best quality, application will totally lock up and not update its screen, that's normal
+10. Be happy
+11. Be creative. Combine several Seene-views of one object together or make lots of Seenes in a room and put it in a room in 3D
+12. Publish result somewhere
+13. Send some feedback to me, [Alexander Petrossian (PAF)](mailto:alexander.petrossian+seene.rb@gmail.com)
+14. If see a problem, report it [here](https://github.com/neopaf/seene-sketchup/issues), I'll see what I can do
 
 Happy importing!
 
@@ -47,15 +47,16 @@ Recommend the Smooth tool from [Skulpt Tools](http://sketchucation.com/forums/vi
 
 # Usage exporting
 
-Tools|Export...
-
-Your Sketchup model from point of view [120,-120,160] looking down z will be exported.
-
-scene.model + poster.jpg will appear in /tmp folder (create one under windows)
-
+1. Tools|Export... 
+Your Sketchup model from current camera will be exported.
+scene.oemodel + poster.jpg will appear in /tmp folder (create one under windows)
 Points that were not raytraced will appear as "far away".
+2. Go to /tmp folder, open poster.jpg and check that it covers exactly what you wanted
+3. Rotate poster.jpg 90 degrees counter clock wise
+4. Reimport result files to check how they look
+5. Upload to Seene, using [seene-uploader](https://github.com/neopaf/seene-uploader) 
 
-TODO: raytrace from a plane with current camera, toward camera direction (export to "Seene" what user "sees").
+TODO: @debug is on, so debug set of specks will appear in camera plane, new group. Press UNDO to kill them. Each speck is a point from which a ray was sent towards camera direction to measure depth to be exported to scene.oemodel
 
 TODO: customize depthmap size and step (now 80x80 with step = 3).
 

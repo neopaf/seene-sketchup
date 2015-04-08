@@ -194,11 +194,19 @@ model.pages.add
      Sketchup.register_importer(SeeneImporter.new)
 
 class SeeneExporter
+	@@debug = true
 	def self.export
 
 		Sketchup.status_text = 'Exporting Seene...'
 		begin
+			model = Sketchup.active_model
+			if @@debug
+				status = model.start_operation('Export Seene Debug', true)
+			end
 			export_internal
+			if @@debug
+				model.commit_operation
+			end
 		rescue Exception => e
 		  UI.messagebox "Export failed: " + e.to_s # + "\n" + e.backtrace
 		  raise #to display the problem in ruby console as well (should be open)
@@ -211,7 +219,7 @@ class SeeneExporter
 #		Math.tan(fov/2.0 /360 * 2*Math::PI) * a/2.0
 #	end
 
-	@@skip = 2
+	@@skip = 3
 	def self.export_internal
 
 folder = "/tmp" # @TODO
@@ -223,7 +231,11 @@ depthmap_height = depthmap_width
 depthmap = Array.new(depthmap_width * depthmap_height)
 model = Sketchup.active_model
 view = model.active_view
-#@TODO rework below code to work from existing camera point of view (and remove this block)
+camera = view.camera
+
+#old_camera = camera
+#view.camera = Sketchup::Camera.new old_camera.eye, old_camera.target, old_camera.xaxis.reverse, false; return
+
 version =	2 # without depth_min,depth_max new fields
 camera_width = 1936 # (jpg
 camera_height = 1936 # sizes)
@@ -231,25 +243,11 @@ camera_fx = 2334.201416015625 #fx?
 camera_fy = 2334.201416015625 #fy?
 camera_k1 = 0.0
 camera_k2 = 0.0
-#6071mm width of picture
-#fov = view.field_of_view #/ view.vpheight * view.vpwidth
-#eye = [depthmap_width *block_size /2,-depthmap_height *block_size /2,depthmap_width *block_size * camera_width/camera_fx]
-#eye = [depthmap_width *block_size /2,-depthmap_height *block_size /2, camera_z(fov, depthmap_width)]
-#eye = [depthmap_width *block_size /2,-depthmap_height *block_size /2, depthmap_width *block_size *0.6434316354]
-#eye = [depthmap_width *block_size /2,-depthmap_height *block_size /2, depthmap_width *block_size * 2]
-#target = [depthmap_width *block_size /2,-depthmap_height *block_size /2,-depthmap_width]
-camera_up_jpg = [0,1,0]
-camera_up_human = [-1,0,0]
-old_camera = view.camera
-view.camera = Sketchup::Camera.new old_camera.eye, old_camera.target, camera_up_jpg, false
-view.zoom_extents
-view.zoom 1.05
 
-##if false
-#view.camera = Sketchup::Camera.new eye, target, camera_up_human, false; return
-#camera = view.camera
-#camera.eye
-trace_down = Geom::Vector3d.new(0, 0, -1) #camera.direction
+depthmap_width_div2 = depthmap_width/2
+depthmap_height_div2 = depthmap_height/2
+
+mesh = Geom::PolygonMesh.new
 
 y = 0
 while y < depthmap_height
@@ -261,7 +259,18 @@ while x < depthmap_width
 		-y,
 		-depth * depthmap_width)
 =end
-	ray = [Geom::Point3d.new(x * block_size, -y * block_size, 0), trace_down]
+	eye = camera.eye + Geom::Vector3d.linear_combination(
+			(x - depthmap_width_div2) * block_size, camera.yaxis,
+			(y - depthmap_height_div2) * block_size, camera.xaxis)
+	if @@debug
+		mesh.add_polygon(
+			eye, eye+[1,0,0], eye+[0,1,0]
+		)
+	end
+
+	ray = [
+		eye,
+		camera.direction]
 	hit = model.raytest(ray, true) # Ignore hidden geometry when computing intersections.
 	if hit == nil
 		depth = 10 # "far away"
@@ -273,6 +282,17 @@ while x < depthmap_width
 	x = x + 1
 end
 y = y + 1
+end
+
+if @@debug
+	materials = model.materials
+	f_material = materials.add('Debug')
+	f_material.texture = 'black'
+	b_material = f_material
+
+	group = model.entities.add_group
+	group.entities.fill_from_mesh(mesh, false, 0, f_material, b_material)
+#	UI.messagebox("filled"+mesh.points.to_s)
 end
 
 File.binwrite(File.expand_path("scene.oemodel",folder),
@@ -289,6 +309,8 @@ depthmap_height]
 .pack("LLLffffLLf*"))
 ##end
 
+#view.camera = Sketchup::Camera.new old_camera.eye, old_camera.target, old_camera.xaxis.reverse, false
+
   keys = {
     :filename => File.expand_path("poster.jpg",folder),
     :width => camera_width,
@@ -298,9 +320,8 @@ depthmap_height]
   }
   view.write_image keys
 
-view.camera = Sketchup::Camera.new old_camera.eye, old_camera.target, camera_up_human, false
-view.zoom_extents
-view.zoom 1.05
+#view.camera = old_camera
+
 UI.messagebox "Exported to " + folder
 	end
 end
