@@ -47,7 +47,10 @@ Recommend the Smooth tool from [Skulpt Tools](http://sketchucation.com/forums/vi
 
 # Usage exporting
 
-1. Tools|Export... 
+1. Extensions|Prepare to export Seeene will reset zoom (which is ignored in scanning now TODO:maybe it is possible to take zoom level into account?)
+2. Extensions|Closer to move camera closer to object
+3. Extensions|Away to move camera away from object
+4. Extensions|Export... 
 Your Sketchup model from current camera will be exported.
 scene.oemodel + poster.jpg will appear in /tmp folder (create one under windows)
 Points that were not raytraced will appear as "far away".
@@ -56,7 +59,7 @@ Points that were not raytraced will appear as "far away".
 4. Reimport result files to check how they look
 5. Upload to Seene, using [seene-uploader](https://github.com/neopaf/seene-uploader) 
 
-TODO: @debug is on, so debug set of specks will appear in camera plane, new group. Press UNDO to kill them. Each speck is a point from which a ray was sent towards camera direction to measure depth to be exported to scene.oemodel
+TODO: one may turn @debug on in code, so debug set of specks will appear in camera plane, new group. Press UNDO to kill them. Each speck is a point from which a ray was sent towards camera direction to measure depth to be exported to scene.oemodel
 
 TODO: customize depthmap size and step (now 80x80 with step = 3).
 

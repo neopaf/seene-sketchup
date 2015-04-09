@@ -37,7 +37,7 @@ class SeeneImporter < Sketchup::Importer
        # This method is called by SketchUp when the user clicks on the
        # "Options" button inside the File > Import dialog. You can use it to
        # gather and store settings for your importer.
-       @@skip = 2
+       @@skip = 0
        def do_options
          # In a real use you would probably store this information in an
          # instance variable.
@@ -53,7 +53,7 @@ class SeeneImporter < Sketchup::Importer
        # processing the file.
        def load_file(file_path, status)
 		model = Sketchup.active_model
-		Sketchup.status_text = 'Importing Seene... (1 minute on max quality)'
+		Sketchup.status_text = 'Importing Seene... (about 1 minute on max quality)'
 			status = model.start_operation('Import Seene', true)
 			begin
 				result = load_file_internal(file_path, status)
@@ -194,10 +194,10 @@ model.pages.add
      Sketchup.register_importer(SeeneImporter.new)
 
 class SeeneExporter
-	@@debug = true
+	@@debug = false
 	def self.export
 
-		Sketchup.status_text = 'Exporting Seene...'
+		Sketchup.status_text = 'Exporting Seene... (about 2 minutes on max quality)'
 		begin
 			model = Sketchup.active_model
 			if @@debug
@@ -219,7 +219,7 @@ class SeeneExporter
 #		Math.tan(fov/2.0 /360 * 2*Math::PI) * a/2.0
 #	end
 
-	@@skip = 3
+	@@skip = 2
 	def self.export_internal
 
 folder = "/tmp" # @TODO
@@ -228,6 +228,7 @@ block_size = 1 + @@skip
 
 depthmap_width = 240 / block_size #10sec # @TODO an export option // 240
 depthmap_height = depthmap_width
+distancemap = Array.new(depthmap_width * depthmap_height)
 depthmap = Array.new(depthmap_width * depthmap_height)
 model = Sketchup.active_model
 view = model.active_view
@@ -247,7 +248,13 @@ camera_k2 = 0.0
 depthmap_width_div2 = depthmap_width/2
 depthmap_height_div2 = depthmap_height/2
 
+scan_height = view.pixels_to_model view.vpheight, camera.eye
+scan_step = scan_height / depthmap_height
+
 mesh = Geom::PolygonMesh.new
+
+distance_min = 1e20
+distance_max = 0
 
 y = 0
 while y < depthmap_height
@@ -260,28 +267,55 @@ while x < depthmap_width
 		-depth * depthmap_width)
 =end
 	eye = camera.eye + Geom::Vector3d.linear_combination(
-			(x - depthmap_width_div2) * block_size, camera.yaxis,
-			(y - depthmap_height_div2) * block_size, camera.xaxis)
-	if @@debug
-		mesh.add_polygon(
-			eye, eye+[1,0,0], eye+[0,1,0]
-		)
-	end
-
-	ray = [
-		eye,
-		camera.direction]
+			((depthmap_width-x) - depthmap_width_div2) * scan_step, camera.yaxis,
+			((depthmap_height-y) - depthmap_height_div2) * scan_step, camera.xaxis)
+	ray = [eye, camera.direction]
 	hit = model.raytest(ray, true) # Ignore hidden geometry when computing intersections.
 	if hit == nil
-		depth = 10 # "far away"
+		distance = -1 # "far away"
+		if @@debug
+			mesh.add_polygon(
+				eye, eye+[1,0,0], eye+[0,1,0]
+			)
+		end
 	else
-		depth = -hit[0].z / block_size / depthmap_width
+		distance = eye.distance(hit[0])
+		if distance < distance_min
+			distance_min = distance
+		end
+		if distance > distance_max
+			distance_max = distance
+		end
+
+		if @@debug
+			mesh.add_polygon(
+				eye, hit[0], eye+[0,1,0]
+			)
+		end
+
 	end
-	depthmap[y * depthmap_width + x] = depth
+	distancemap[y * depthmap_width + x] = distance
 
 	x = x + 1
 end
 y = y + 1
+end
+
+distance_range = distance_max-distance_min
+
+i = 0
+while i < depthmap_width * depthmap_height
+	# min stretch to 0.6?
+	# max stretch to 10?
+	distance = distancemap[i]
+	
+	if distance < 0 then
+		distance = 2 * distance_max
+	end
+
+
+	depthmap[i] = (distance - distance_min) / distance_range * 10 + 0.2
+	i = i + 1
 end
 
 if @@debug
@@ -324,12 +358,35 @@ depthmap_height]
 
 UI.messagebox "Exported to " + folder
 	end
+
+	def self.prepare
+		c = Sketchup.active_model.active_view.camera
+		Sketchup.active_model.active_view.camera = Sketchup::Camera.new c.eye, c.direction, c.up, false
+	end
+
+	def self.closer
+		c = Sketchup.active_model.active_view.camera
+		forward = c.direction
+		forward.length = 100
+		Sketchup.active_model.active_view.camera = Sketchup::Camera.new c.eye + forward,c.direction,c.up,false
+	end
+
+	def self.away
+		c = Sketchup.active_model.active_view.camera
+		backward = c.direction.reverse
+		backward .length = 100
+		Sketchup.active_model.active_view.camera = Sketchup::Camera.new c.eye + backward,c.direction,c.up,false
+	end
+
 end
 
 unless file_loaded?(__FILE__)
+	UI.menu("Plugins").add_item("Closer") { SeeneExporter.closer }
+	UI.menu("Plugins").add_item("Away") { SeeneExporter.away }
+	UI.menu("Plugins").add_item("Reset camera zoom") { SeeneExporter.prepare }
 	UI.menu("Plugins").add_item("Export Seene...") { SeeneExporter.export }
 end
- 
+
 file_loaded(__FILE__)
 
 #UI.messagebox("hi")
