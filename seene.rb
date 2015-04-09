@@ -37,7 +37,7 @@ class SeeneImporter < Sketchup::Importer
        # This method is called by SketchUp when the user clicks on the
        # "Options" button inside the File > Import dialog. You can use it to
        # gather and store settings for your importer.
-       @@skip = 0
+       @@skip = 2
        def do_options
          # In a real use you would probably store this information in an
          # instance variable.
@@ -255,6 +255,8 @@ mesh = Geom::PolygonMesh.new
 
 distance_min = 1e20
 distance_max = 0
+distance_total = 0
+distance_n = 0
 
 y = 0
 while y < depthmap_height
@@ -286,6 +288,8 @@ while x < depthmap_width
 		if distance > distance_max
 			distance_max = distance
 		end
+		distance_total = distance_total + distance
+		distance_n = distance_n + 1
 
 		if @@debug
 			mesh.add_polygon(
@@ -301,7 +305,9 @@ end
 y = y + 1
 end
 
-distance_range = distance_max-distance_min
+#distance_range = distance_max-distance_min
+distance_avg = distance_total / distance_n
+initial_depth = (distance_avg - distance_min) / scan_height * 1
 
 i = 0
 while i < depthmap_width * depthmap_height
@@ -310,11 +316,13 @@ while i < depthmap_width * depthmap_height
 	distance = distancemap[i]
 	
 	if distance < 0 then
-		distance = 2 * distance_max
+		distance = 1.2 * distance_max
 	end
 
 
-	depthmap[i] = (distance - distance_min) / distance_range * 10 + 0.2
+#	depthmap[i] = (distance - distance_min) / distance_range * 10 + 0.2
+	depthmap[i] = (distance - distance_min) / scan_height + initial_depth
+#	puts depthmap[i]
 	i = i + 1
 end
 

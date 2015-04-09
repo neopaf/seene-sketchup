@@ -91,13 +91,13 @@ After import: [Click to see](samples/paf-sand-tunnel/sketchup_imported.png), [Ri
 
 # mona (export sample)
 
-Original: [Right click here|Download...](https://github.com/neopaf/seene-sketchup/raw/master/samples/artificial-1-mona/original.skp)
+Original: [Right click here|Download...](https://github.com/neopaf/seene-sketchup/raw/master/samples/synthetic-1-mona/original.skp)
 
 Exported:
 
-[poster.jpg](samples/artificial-1-mona/poster.jpg)
+[poster.jpg](samples/synthetic-1-mona/poster.jpg)
 
-[scene.oemodel](samples/artificial-1-mona/scene.oemodel)
+[scene.oemodel](samples/synthetic-1-mona/scene.oemodel)
 
 Uploaded: http://seene.co/s/MUoPZc/ 
 
@@ -120,6 +120,11 @@ Exported:
 [scene.oemodel](samples/retouched-1-petya/scene.oemodel)
 
 Uploaded: http://seene.co/s/DpXtqn/
+
+# bike (export sample)
+
+Original: [Right click here|Download...](https://github.com/neopaf/seene-sketchup/raw/master/samples/synthetic-3-bike/original.zip
+Uploaded: http://seene.co/s/jRba33/
 
 # Thanks
 
