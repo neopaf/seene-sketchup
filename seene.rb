@@ -222,7 +222,7 @@ class SeeneExporter
 #		Math.tan(fov/2.0 /360 * 2*Math::PI) * a/2.0
 #	end
 
-	@@skip = 1
+	@@skip = 0
 	@@distance_k = 1
 	def self.export_internal
 
