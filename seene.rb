@@ -93,18 +93,21 @@ depthmap_height = buffer.unpack("LLLffffLL")
 #240
 
 header_size = 36
+if version==3
+	header_size=44
+end
 
 body = buffer[header_size, buffer.length]
 depthmap = body.unpack("f*")
 
 #puts depthmap_width
 
-def v(x,y,depthmap,depthmap_width,depthmap_height)
+def v(x,y,depthmap,depthmap_width,depthmap_height,camera_width,camera_height)
 	depth = depthmap[y * depthmap_width + x]
 	return Geom::Point3d.new(
-		x,
-		-y,
-		-depth * depthmap_width)
+		x/depthmap_width*camera_width,
+		-y/depthmap_height*camera_height,
+		-depth * depthmap_height)
 end
 
 mesh = Geom::PolygonMesh.new
@@ -115,14 +118,14 @@ while y < depthmap_height-block_size
 x = 0
 while x < depthmap_width-block_size
 	mesh.add_polygon(
-		v(x+0, y+0, depthmap,depthmap_width,depthmap_height),
-		v(x+block_size, y+0, depthmap,depthmap_width,depthmap_height),
-		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height),
+		v(x+0, y+0, depthmap,depthmap_width,depthmap_height,camera_width,camera_height),
+		v(x+block_size, y+0, depthmap,depthmap_width,depthmap_height,camera_width,camera_height),
+		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height,camera_width,camera_height),
 	)
 	mesh.add_polygon(
-		v(x+0, y+0, depthmap,depthmap_width,depthmap_height),
-		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height),
-		v(x+0, y+block_size, depthmap,depthmap_width,depthmap_height)
+		v(x+0, y+0, depthmap,depthmap_width,depthmap_height,camera_width,camera_height),
+		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height,camera_width,camera_height),
+		v(x+0, y+block_size, depthmap,depthmap_width,depthmap_height,camera_width,camera_height)
 	)
 	x = x + block_size
 end
@@ -141,7 +144,7 @@ f_material.texture = File.expand_path("poster.jpg",folder)
 b_material = f_material
 
 #first_point = v(0, 0, depthmap,depthmap_width,depthmap_height)
-last_point = v(depthmap_width-block_size, depthmap_height-block_size, depthmap,depthmap_width,depthmap_height)
+last_point = v(depthmap_width-block_size, depthmap_height-block_size, depthmap,depthmap_width,depthmap_height,camera_width,camera_height)
 #f_material.texture.size = last_point.x - first_point.x
 f_material.texture.size = last_point.x
 smooth_flags = Geom::PolygonMesh::AUTO_SOFTEN
@@ -219,7 +222,8 @@ class SeeneExporter
 #		Math.tan(fov/2.0 /360 * 2*Math::PI) * a/2.0
 #	end
 
-	@@skip = 2
+	@@skip = 1
+	@@distance_k = 1
 	def self.export_internal
 
 folder = "/tmp" # @TODO
@@ -238,18 +242,12 @@ camera = view.camera
 #view.camera = Sketchup::Camera.new old_camera.eye, old_camera.target, old_camera.xaxis.reverse, false; return
 
 version =	2 # without depth_min,depth_max new fields
-camera_width = 1936 # (jpg
-camera_height = 1936 # sizes)
+camera_height = view.vpheight*2 # sizes)
+camera_width = camera_height # (jpg
 camera_fx = 2334.201416015625 #fx?
 camera_fy = 2334.201416015625 #fy?
 camera_k1 = 0.0
 camera_k2 = 0.0
-
-depthmap_width_div2 = depthmap_width/2
-depthmap_height_div2 = depthmap_height/2
-
-scan_height = view.pixels_to_model view.vpheight, camera.eye
-scan_step = scan_height / depthmap_height
 
 mesh = Geom::PolygonMesh.new
 
@@ -258,9 +256,17 @@ distance_max = 0
 distance_total = 0
 distance_n = 0
 
-y = 0
+eye = camera.eye
+
+if view.vpwidth < view.vpheight
+	UI.messagebox "Please resize your window show it will be square or wider than taller"
+	return
+end
+vp_x_base = (view.vpwidth - view.vpheight) / 2
+
+y = 0.0
 while y < depthmap_height
-x = 0
+x = 0.0
 while x < depthmap_width
 =begin
 	return Geom::Point3d.new(
@@ -268,17 +274,15 @@ while x < depthmap_width
 		-y,
 		-depth * depthmap_width)
 =end
-	eye = camera.eye + Geom::Vector3d.linear_combination(
-			((depthmap_width-x) - depthmap_width_div2) * scan_step, camera.yaxis,
-			((depthmap_height-y) - depthmap_height_div2) * scan_step, camera.xaxis)
-	ray = [eye, camera.direction]
+	ray = view.pickray(
+		(1-y/depthmap_height) * view.vpheight + vp_x_base,
+		x/depthmap_width * view.vpheight)
 	hit = model.raytest(ray, true) # Ignore hidden geometry when computing intersections.
 	if hit == nil
 		distance = -1 # "far away"
 		if @@debug
 			mesh.add_polygon(
-				eye, eye+[1,0,0], eye+[0,1,0]
-			)
+				eye, eye+[1,0,0], eye+[0,1,0])
 		end
 	else
 		distance = eye.distance(hit[0])
@@ -305,9 +309,16 @@ end
 y = y + 1
 end
 
-#distance_range = distance_max-distance_min
+distance_range = distance_max - distance_min
 distance_avg = distance_total / distance_n
-initial_depth = (distance_avg - distance_min) / scan_height * 1
+#initial_depth = distance_range * 10 / 100
+
+distance_avg_towards_camera_direction = camera.direction.clone
+distance_avg_towards_camera_direction.length = distance_avg
+
+model_height = view.pixels_to_model(
+	view.vpheight,
+	camera.eye + distance_avg_towards_camera_direction)
 
 i = 0
 while i < depthmap_width * depthmap_height
@@ -316,13 +327,12 @@ while i < depthmap_width * depthmap_height
 	distance = distancemap[i]
 	
 	if distance < 0 then
-		distance = 1.2 * distance_max
+		distance = 1.1 * distance_max
 	end
 
 
-#	depthmap[i] = (distance - distance_min) / distance_range * 10 + 0.2
-	depthmap[i] = (distance - distance_min) / scan_height + initial_depth
-#	puts depthmap[i]
+	depthmap[i] = distance / model_height * @@distance_k
+#	puts "#{depthmap[i]}=#{distance} / #{model_height} * #{@@distance_k}"
 	i = i + 1
 end
 
@@ -369,21 +379,21 @@ UI.messagebox "Exported to " + folder
 
 	def self.prepare
 		c = Sketchup.active_model.active_view.camera
-		Sketchup.active_model.active_view.camera = Sketchup::Camera.new c.eye, c.direction, c.up, false
+		Sketchup.active_model.active_view.camera = Sketchup::Camera.new c.eye, c.direction, c.up
 	end
 
 	def self.closer
 		c = Sketchup.active_model.active_view.camera
 		forward = c.direction
-		forward.length = 100
-		Sketchup.active_model.active_view.camera = Sketchup::Camera.new c.eye + forward,c.direction,c.up,false
+		forward.length = 10000
+		Sketchup.active_model.active_view.camera = Sketchup::Camera.new c.eye + forward,c.direction,c.up
 	end
 
 	def self.away
 		c = Sketchup.active_model.active_view.camera
 		backward = c.direction.reverse
-		backward .length = 100
-		Sketchup.active_model.active_view.camera = Sketchup::Camera.new c.eye + backward,c.direction,c.up,false
+		backward .length = 100000
+		Sketchup.active_model.active_view.camera = Sketchup::Camera.new c.eye + backward,c.direction,c.up
 	end
 
 end
