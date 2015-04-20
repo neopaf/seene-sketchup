@@ -312,13 +312,13 @@ end
 distance_range = distance_max - distance_min
 distance_avg = distance_total / distance_n
 #initial_depth = distance_range * 10 / 100
+distance_offset =
 
-distance_avg_towards_camera_direction = camera.direction.clone
-distance_avg_towards_camera_direction.length = distance_avg
-
-model_height = view.pixels_to_model(
-	view.vpheight,
-	camera.eye + distance_avg_towards_camera_direction)
+#distance_avg_towards_camera_direction = camera.direction.clone
+#distance_avg_towards_camera_direction.length = distance_avg
+#model_height = view.pixels_to_model(
+#	view.vpheight,
+#	camera.eye + distance_avg_towards_camera_direction)
 
 i = 0
 while i < depthmap_width * depthmap_height
@@ -331,8 +331,9 @@ while i < depthmap_width * depthmap_height
 	end
 
 
-	depthmap[i] = distance / model_height * @@distance_k
-#	puts "#{depthmap[i]}=#{distance} / #{model_height} * #{@@distance_k}"
+#	depthmap[i] = distance / model_height * @@distance_k
+	depthmap[i] = 0.6 + (distance - distance_min) / distance_range * @@distance_k
+	#puts "#{depthmap[i]}=#{distance} / #{model_height} * #{@@distance_k}"
 	i = i + 1
 end
 
