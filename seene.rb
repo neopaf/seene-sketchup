@@ -93,20 +93,21 @@ depthmap_height = buffer.unpack("LLLffffLL")
 #240
 
 header_size = 36
-if version==3
+if version!=2
 	header_size=44
 end
+#puts "version[#{version}]"
 
 body = buffer[header_size, buffer.length]
 depthmap = body.unpack("f*")
 
 #puts depthmap_width
 
-def v(x,y,depthmap,depthmap_width,depthmap_height,camera_width,camera_height)
+def v(x,y,depthmap,depthmap_width,depthmap_height)
 	depth = depthmap[y * depthmap_width + x]
 	return Geom::Point3d.new(
-		x/depthmap_width*camera_width,
-		-y/depthmap_height*camera_height,
+               x,
+               -y,
 		-depth * depthmap_height)
 end
 
@@ -118,14 +119,14 @@ while y < depthmap_height-block_size
 x = 0
 while x < depthmap_width-block_size
 	mesh.add_polygon(
-		v(x+0, y+0, depthmap,depthmap_width,depthmap_height,camera_width,camera_height),
-		v(x+block_size, y+0, depthmap,depthmap_width,depthmap_height,camera_width,camera_height),
-		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height,camera_width,camera_height),
+		v(x+0, y+0, depthmap,depthmap_width,depthmap_height),
+		v(x+block_size, y+0, depthmap,depthmap_width,depthmap_height),
+		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height),
 	)
 	mesh.add_polygon(
-		v(x+0, y+0, depthmap,depthmap_width,depthmap_height,camera_width,camera_height),
-		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height,camera_width,camera_height),
-		v(x+0, y+block_size, depthmap,depthmap_width,depthmap_height,camera_width,camera_height)
+		v(x+0, y+0, depthmap,depthmap_width,depthmap_height),
+		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height),
+		v(x+0, y+block_size, depthmap,depthmap_width,depthmap_height)
 	)
 	x = x + block_size
 end
@@ -144,7 +145,8 @@ f_material.texture = File.expand_path("poster.jpg",folder)
 b_material = f_material
 
 #first_point = v(0, 0, depthmap,depthmap_width,depthmap_height)
-last_point = v(depthmap_width-block_size, depthmap_height-block_size, depthmap,depthmap_width,depthmap_height,camera_width,camera_height)
+last_point = v(depthmap_width-1, depthmap_height-1, depthmap,depthmap_width,depthmap_height)
+#puts "last_point[#{last_point}]"
 #f_material.texture.size = last_point.x - first_point.x
 f_material.texture.size = last_point.x
 smooth_flags = Geom::PolygonMesh::AUTO_SOFTEN
