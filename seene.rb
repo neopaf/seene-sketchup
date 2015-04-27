@@ -37,7 +37,7 @@ class SeeneImporter < Sketchup::Importer
        # This method is called by SketchUp when the user clicks on the
        # "Options" button inside the File > Import dialog. You can use it to
        # gather and store settings for your importer.
-       @@skip = 10
+       @@skip = 2
        def do_options
          # In a real use you would probably store this information in an
          # instance variable.
@@ -110,9 +110,9 @@ def v(x,y,depthmap,depthmap_width,depthmap_height,xk,yk)
 #               -y,
 #		-depth * depthmap_height)
 	return Geom::Point3d.new(
-		depth * ((x + 0.5) / depthmap_width - 0.5) / xk,
-		-depth * ((y + 0.5) / depthmap_height - 0.5) / yk,
-		-(depth - 1))
+		depth * ((x + 0.5) / depthmap_width - 0.5) / xk * 1000,
+		-depth * ((y + 0.5) / depthmap_height - 0.5) / yk * 1000,
+		-(depth - 1) * 1000)
 end
 
 mesh = Geom::PolygonMesh.new
@@ -194,6 +194,10 @@ while y < depthmap_height-block_size
 x = 0
 while x < depthmap_width-block_size
 	face = faces[i];	i = i + 1
+	if face == nil
+		UI.messagebox("Less faces were generated then expected, texture is probably misaligned a bit (1)")
+		break
+	end
 	pt_array = [
 		v(x+0, y+0, depthmap,depthmap_width,depthmap_height,xk,yk),
 		p(x+0, y+0,          depthmap_width,depthmap_height),
@@ -206,6 +210,10 @@ while x < depthmap_width-block_size
 	face.position_material(material, pt_array, true)
 
 	face = faces[i];	i = i + 1
+	if face == nil
+		UI.messagebox("Less faces were generated then expected, texture is probably misaligned a bit (1)")
+		break
+	end
 	pt_array = [
 		v(x+0, y+0, depthmap,depthmap_width,depthmap_height,xk,yk),
 		p(x+0, y+0,          depthmap_width,depthmap_height),
@@ -229,7 +237,7 @@ end
 # x, y, z coordinates, a "target" position that
 # defines what to look at, and an "up" vector.
 
-eye = [0,0,1]
+eye = [0,0,1 * 1000]
 target = [0,0,0]
 up = [-1,0,0]
 my_camera = Sketchup::Camera.new eye, target, up, true
