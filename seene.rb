@@ -37,7 +37,7 @@ class SeeneImporter < Sketchup::Importer
        # This method is called by SketchUp when the user clicks on the
        # "Options" button inside the File > Import dialog. You can use it to
        # gather and store settings for your importer.
-       @@skip = 2
+       @@skip = 10
        def do_options
          # In a real use you would probably store this information in an
          # instance variable.
@@ -103,15 +103,24 @@ depthmap = body.unpack("f*")
 
 #puts depthmap_width
 
-def v(x,y,depthmap,depthmap_width,depthmap_height)
+def v(x,y,depthmap,depthmap_width,depthmap_height,xk,yk)
 	depth = depthmap[y * depthmap_width + x]
+#	return Geom::Point3d.new(
+#               x,
+#               -y,
+#		-depth * depthmap_height)
 	return Geom::Point3d.new(
-               x,
-               -y,
-		-depth * depthmap_height)
+		depth * ((x + 0.5) / depthmap_width - 0.5) / xk,
+		-depth * ((y + 0.5) / depthmap_height - 0.5) / yk,
+		-(depth - 1))
 end
 
 mesh = Geom::PolygonMesh.new
+
+xk = camera_fx / camera_width
+yk = camera_fy / camera_height
+
+vertex2point = Hash.new
 
 block_size = 1 + @@skip
 y = 0
@@ -119,14 +128,14 @@ while y < depthmap_height-block_size
 x = 0
 while x < depthmap_width-block_size
 	mesh.add_polygon(
-		v(x+0, y+0, depthmap,depthmap_width,depthmap_height),
-		v(x+block_size, y+0, depthmap,depthmap_width,depthmap_height),
-		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height),
+		v(x+0, y+0, depthmap,depthmap_width,depthmap_height,xk,yk),
+		v(x+block_size, y+0, depthmap,depthmap_width,depthmap_height,xk,yk),
+		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height,xk,yk),
 	)
 	mesh.add_polygon(
-		v(x+0, y+0, depthmap,depthmap_width,depthmap_height),
-		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height),
-		v(x+0, y+block_size, depthmap,depthmap_width,depthmap_height)
+		v(x+0, y+0, depthmap,depthmap_width,depthmap_height,xk,yk),
+		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height,xk,yk),
+		v(x+0, y+block_size, depthmap,depthmap_width,depthmap_height,xk,yk)
 	)
 	x = x + block_size
 end
@@ -138,39 +147,81 @@ model = Sketchup.active_model
 group = model.entities.add_group
 
 materials = model.materials
-f_material = materials.add('Front')
-f_material.texture = File.expand_path("poster.jpg",folder)
-#b_material = materials.add('Back')
-#b_material.texture = 'black'
-b_material = f_material
+material = materials.add
+material.texture = File.expand_path("poster.jpg",folder)
 
 #first_point = v(0, 0, depthmap,depthmap_width,depthmap_height)
-last_point = v(depthmap_width-1, depthmap_height-1, depthmap,depthmap_width,depthmap_height)
+##last_point = v(depthmap_width-1, depthmap_height-1, depthmap,depthmap_width,depthmap_height,xk,yk)
 #puts "last_point[#{last_point}]"
 #f_material.texture.size = last_point.x - first_point.x
-f_material.texture.size = last_point.x
+##f_material.texture.size = last_point.x * 2
 smooth_flags = Geom::PolygonMesh::AUTO_SOFTEN
 #smooth_flags = Geom::PolygonMesh::AUTO_SOFTEN + Geom::PolygonMesh::SMOOTH_SOFT_EDGES
 
 ## Adding faces (slow)
 
-#group.entities.add_faces_from_mesh mesh, smooth_flags, f_material, f_material
+#group.entities.add_faces_from_mesh mesh, smooth_flags, material, material
 #http://www.sketchup.com/intl/en/developer/docs/ourdoc/entities#fill_from_mesh
 #quote:
 #It has higher performance than add_faces_from_mesh, but does less error checking as it builds the geometry.
-group.entities.fill_from_mesh(mesh, false, smooth_flags, f_material, b_material)
+group.entities.fill_from_mesh(mesh, false, smooth_flags) #, material, material
 
 
 ## Setting projection properties
 
 vector_down = Geom::Vector3d.new 0,0,1
+
+faces = []
 group.entities.each { |entity|
 	if entity.is_a? Sketchup::Face
+		faces << entity
 		entity.set_texture_projection(vector_down,true)
 		entity.set_texture_projection(vector_down,false)
 		entity.casts_shadows = false
 	end
 }
+
+def p(x,y,depthmap_width,depthmap_height)
+	return Geom::Point3d.new(
+		(x + 0.5) / depthmap_width,
+		1 - (y + 0.5) / depthmap_height,
+		0)
+end
+
+i = 0
+y = 0
+while y < depthmap_height-block_size
+x = 0
+while x < depthmap_width-block_size
+	face = faces[i];	i = i + 1
+	pt_array = [
+		v(x+0, y+0, depthmap,depthmap_width,depthmap_height,xk,yk),
+		p(x+0, y+0,          depthmap_width,depthmap_height),
+		v(x+block_size, y+0, depthmap,depthmap_width,depthmap_height,xk,yk),
+		p(x+block_size, y+0,          depthmap_width,depthmap_height),
+		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height,xk,yk),
+		p(x+block_size, y+block_size,          depthmap_width,depthmap_height)
+	]
+	face.position_material(material, pt_array, false)
+	face.position_material(material, pt_array, true)
+
+	face = faces[i];	i = i + 1
+	pt_array = [
+		v(x+0, y+0, depthmap,depthmap_width,depthmap_height,xk,yk),
+		p(x+0, y+0,          depthmap_width,depthmap_height),
+		v(x+block_size, y+block_size, depthmap,depthmap_width,depthmap_height,xk,yk),
+		p(x+block_size, y+block_size,          depthmap_width,depthmap_height),
+		v(x+0, y+block_size, depthmap,depthmap_width,depthmap_height,xk,yk),
+		p(x+0, y+block_size,          depthmap_width,depthmap_height)
+	]
+	face.position_material(material, pt_array, false)
+	face.position_material(material, pt_array, true)
+
+	x = x + block_size
+end
+y = y + block_size
+end
+
 
 ## Moving camera
 
@@ -178,10 +229,10 @@ group.entities.each { |entity|
 # x, y, z coordinates, a "target" position that
 # defines what to look at, and an "up" vector.
 
-eye = [last_point.x/2,last_point.y/2,depthmap_width*2]
-target = [last_point.x/2,last_point.y/2,0]
+eye = [0,0,1]
+target = [0,0,0]
 up = [-1,0,0]
-my_camera = Sketchup::Camera.new eye, target, up, false
+my_camera = Sketchup::Camera.new eye, target, up, true
 
 # Get a handle to the current view and change its camera.
 view = Sketchup.active_model.active_view
