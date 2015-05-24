@@ -219,23 +219,14 @@ class SeeneExporter
 #		Math.tan(fov/2.0 /360 * 2*Math::PI) * a/2.0
 #	end
 
-	@@skip = 2
+	@@skip = 0
 	def self.export_internal
 
 folder = "/tmp" # @TODO
 
-block_size = 1 + @@skip
-
-depthmap_width = 240 / block_size #10sec # @TODO an export option // 240
-depthmap_height = depthmap_width
-distancemap = Array.new(depthmap_width * depthmap_height)
-depthmap = Array.new(depthmap_width * depthmap_height)
 model = Sketchup.active_model
 view = model.active_view
 camera = view.camera
-
-#old_camera = camera
-#view.camera = Sketchup::Camera.new old_camera.eye, old_camera.target, old_camera.xaxis.reverse, false; return
 
 version =	2 # without depth_min,depth_max new fields
 camera_width = 1936 # (jpg
@@ -244,6 +235,22 @@ camera_fx = 2334.201416015625 #fx?
 camera_fy = 2334.201416015625 #fy?
 camera_k1 = 0.0
 camera_k2 = 0.0
+
+ keys = {
+    :filename => File.expand_path("poster.jpg",folder),
+    :width => camera_width,
+    :height => camera_height,
+    :antialias => true,
+    :transparent => false
+  }
+  view.write_image keys
+
+block_size = 1 + @@skip
+
+depthmap_width = 240 / block_size #10sec # @TODO an export option // 240
+depthmap_height = depthmap_width
+distancemap = Array.new(depthmap_width * depthmap_height)
+depthmap = Array.new(depthmap_width * depthmap_height)
 
 depthmap_width_div2 = depthmap_width/2
 depthmap_height_div2 = depthmap_height/2
@@ -349,20 +356,6 @@ depthmap_width,
 depthmap_height]
 .concat(depthmap)
 .pack("LLLffffLLf*"))
-##end
-
-#view.camera = Sketchup::Camera.new old_camera.eye, old_camera.target, old_camera.xaxis.reverse, false
-
-  keys = {
-    :filename => File.expand_path("poster.jpg",folder),
-    :width => camera_width,
-    :height => camera_height,
-    :antialias => true,
-    :transparent => false
-  }
-  view.write_image keys
-
-#view.camera = old_camera
 
 UI.messagebox "Exported to " + folder
 	end
@@ -382,7 +375,7 @@ UI.messagebox "Exported to " + folder
 	def self.away
 		c = Sketchup.active_model.active_view.camera
 		backward = c.direction.reverse
-		backward .length = 100
+		backward .length = 500
 		Sketchup.active_model.active_view.camera = Sketchup::Camera.new c.eye + backward,c.direction,c.up,false
 	end
 
